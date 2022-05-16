@@ -1,10 +1,8 @@
-from hashlib import new
-from urllib import response
 from pymongo import MongoClient
 from flask import Flask, request, Response, jsonify
 from bson import json_util
 from bson.objectid import ObjectId
-import pprint
+
 
 app = Flask(__name__)
 
@@ -94,19 +92,30 @@ def showQuantityAllProdcut():
     response = json_util.dumps(quantity)
     return Response(response, mimetype="application/json")
     
-@app.route('/login/product/update', methods=['PUT'])
-def updateProduct():
-    oldNameProduct = request.json({"name_product"})
-    newNameProduct = request.json({"name_product"})
-    productPrice = request.json("price")
-    productQuantity = request.json("quantity")
-    productDescription = request.json("description")
-    checkProduct = product.find_one({"name_product": oldNameProduct})
-    if checkProduct:
-        
+@app.route('/login/product/update/<id>', methods=['PUT'])
+def updateProduct(id):
+    checkProductID = product.find_one({"_id": ObjectId(id)})
+    productName = request.json["name_product"]
+    productPrice = request.json["price"]
+    productQuantity = request.json["quantity"]
+    productDescription = request.json["description"]
+    if checkProductID:
+        product.update_one({'_id': ObjectId(id)}, {'$set': {'name_product': productName, 'price': productPrice, 'quantity': productQuantity, 'description': productDescription}})
+        response = jsonify(message='User ' + id + ' Update successfully')
+        response.status_code = 200
+        return response
     else:
         not_found()
 
+@app.route('/login/product/delete/<id>', methods=['DELETE'])
+def deleteProduct(id):
+    checkProductID = product.find_one({"_id": ObjectId(id)})
+    if checkProductID:
+        product.delete_one({'_id': ObjectId(id)})
+        response = jsonify(message='User ' + id + ' has been deleted!')
+        return response
+    else:
+        not_found()
 
 @app.errorhandler(404)
 def not_found(error=None):
