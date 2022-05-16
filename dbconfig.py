@@ -60,7 +60,6 @@ def login():
 def verifyemail():
     email = request.json['email']
     check_email = user_collection.find_one({'email': email})
-
     if check_email:
         response = jsonify(message='A verify email has been sent to your email address!')
         response.status_code = 200
@@ -69,7 +68,7 @@ def verifyemail():
         not_found()
 
 
-@app.route('/login/product', methods=['POST'])
+@app.route('/product', methods=['POST'])
 def createProduct():
     productName = request.json['name_product']
     productPrice = request.json['price']
@@ -86,13 +85,13 @@ def createProduct():
         not_found()
 
 
-@app.route('/login/product/quantity', methods=['GET'])
+@app.route('/product/quantity', methods=['GET'])
 def showQuantityAllProdcut():
     quantity = product.find({})
     response = json_util.dumps(quantity)
     return Response(response, mimetype="application/json")
     
-@app.route('/login/product/update/<id>', methods=['PUT'])
+@app.route('/product/update/<id>', methods=['PUT'])
 def updateProduct(id):
     checkProductID = product.find_one({"_id": ObjectId(id)})
     productName = request.json["name_product"]
@@ -107,7 +106,7 @@ def updateProduct(id):
     else:
         not_found()
 
-@app.route('/login/product/delete/<id>', methods=['DELETE'])
+@app.route('/product/delete/<id>', methods=['DELETE'])
 def deleteProduct(id):
     checkProductID = product.find_one({"_id": ObjectId(id)})
     if checkProductID:
@@ -116,6 +115,8 @@ def deleteProduct(id):
         return response
     else:
         not_found()
+
+
 
 @app.errorhandler(404)
 def not_found(error=None):
