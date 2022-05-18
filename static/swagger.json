@@ -232,6 +232,47 @@
           }
         }
       }
+    },
+    "/order/{productId}": {
+      "put": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Order product",
+        "description": "",
+        "operationId": "orderProduct",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product id needs to buy",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Product object that needs to be buy",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid information"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -265,6 +306,14 @@
         },
         "description": {
           "type": "string"
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "integer"
         }
       }
     }

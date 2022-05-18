@@ -1,4 +1,3 @@
-from itsdangerous import json
 from pymongo import MongoClient
 from flask import Flask, request, Response, jsonify
 from bson import json_util
@@ -9,8 +8,8 @@ from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 
-#connection_string = f"mongodb://neko:123@172.16.2.97:27017"
-connection_string = f"mongodb://neko:123@192.168.32.114:27017"
+connection_string = f"mongodb://neko:123@172.16.2.97:27017"
+#connection_string = f"mongodb://neko:123@192.168.32.114:27017"
 client = MongoClient(connection_string)
 
 
@@ -57,18 +56,21 @@ def register():
 def login():
     username = request.args.get("username")
     password = request.args.get("password")
-    """
-    check_user = {"$and": [
+    #username = request.json["username"]
+    #password = request.json["password"]
+    check_user = []
+    check_user = user_collection.find({"$and": [
         {"username": {"$eq": username}},
         {"password": {"$eq": password}}
-    ]}
-"""
-    check_user = user_collection.find({'username': username, "password": password})
-    response_2 = json_util.dumps(check_user)
-    if response_2:
-    #    response = jsonify(message='Login sucesss!')
-     #   response.status_code = 200
-        return Response(response_2, mimetype="application/json")
+    ]})
+    response_2 = list(check_user)
+#    check_user = user_collection.find({'username': username, "password": password})
+    #response_2 = json_util.dumps(check_user)
+    if check_user.count():
+        response = jsonify(message='Login sucesss!')
+        response.status_code = 200
+        return response
+        #return Response(response_2, mimetype="application/json")
     else:
         return not_found()
 
@@ -79,16 +81,13 @@ def login():
 def verifyemail():
     email = request.args.get("email")
     check_email = user_collection.find({'email': email})
-    response = json_util.dumps(check_email)
-    """
-    if check_email:
+    response = list(check_email)
+    if response.count():
         response = jsonify(message='A verify email has been sent to your email address!')
         response.status_code = 200
         return response
     else:
         return not_found()
-        """
-    return Response(response, mimetype="application/json")
 
 
 @app.route('/product', methods=['POST'])
@@ -138,21 +137,22 @@ def deleteProduct(id):
         return response
     else:
         return not_found()
-"""
-@app.route('/order/<id>', methods=['POST', 'GET'])
+
+@app.route('/order/<id>', methods=['PUT'])
 def order(id):
     checkProductID = product.find_one({"_id": ObjectId(id)}) #just for checking data
-    cursor = 
-    
+    #quantityOrder = request.args.get("quantity")
+    quantityOrder = request.json["quantity"]
     
     if checkProductID:
-        product.update_one({'_id': ObjectId}, {'$set': {"quantity": afterBuy}})
-        response = jsonify(message='order success!')
-        response.status_code = 201
+        product.update_one({"_id": ObjectId(id)}, {"$inc": {"quantity": -int(quantityOrder)}})
+        price = product.find_one({"_id": ObjectId(id)}, {"price"})
+        totalCost = price["price"] * int(quantityOrder)
+        response = jsonify(message="Total cost = %s" %totalCost)
         return response
     else:
-        not_found()
-"""
+        return not_found()
+
 @app.errorhandler(404)
 def not_found(error=None):
     message = {
