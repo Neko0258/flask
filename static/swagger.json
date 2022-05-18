@@ -1,0 +1,272 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "CREATE BY NEKO",
+    "version": "1.0.0",
+    "title": "RESTFUL-API-PYTHON-MONGODB",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.ort/license/MIT"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/login": {
+      "get": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Login with the exist user",
+        "operationId": "checkUser",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The user name for login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": " The password for the login",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "400": {
+            "description": "Invalid username/password"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "Add a new user"
+        ],
+        "summary": "Register",
+        "operationId": "addUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User information needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Create succesful"
+          },
+          "400": {
+            "description": "User or email existed"
+          }
+        }
+      }
+    },
+    "/verifyemail": {
+      "get": {
+        "tags": [
+          "Verify an Email"
+        ],
+        "summary": "Verify",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email need to verify",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An email has been sent to your email, check your mail box"
+          },
+          "400": {
+            "description": "The email is wrong or not exist"
+          }
+        }
+      }
+    },
+    "/product": {
+      "post": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Create a new product",
+        "description": "",
+        "operationId": "addProduct",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Product object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Add product success!"
+          },
+          "400": {
+            "description": "Product already exist!"
+          }
+        }
+      }
+    },
+    "/product/quantity": {
+      "get": {
+        "tags": [
+          "Quantity"
+        ],
+        "summary": "Show the quantity of all prodcut",
+        "operationId": "showProduct",
+        "responses": {
+          "200": {
+            "description": "Request Success"
+          },
+          "400": {
+            "description": "Fail"
+          }
+        }
+      }
+    },
+    "/product/update/{productId}": {
+      "put": {
+        "tags": [
+          "Update"
+        ],
+        "summary": "Update an existing product",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product id to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Product object that needs to bee changing",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid information"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/product/delete/{productId}": {
+      "delete": {
+        "tags": [
+          "Delete"
+        ],
+        "summary": "Delete a product",
+        "description": "",
+        "operationId": "deleteProduct",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product id to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete success"
+          },
+          "400": {
+            "description": "Product doesn't exist"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "name_product": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
