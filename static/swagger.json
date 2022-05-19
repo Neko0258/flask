@@ -6,7 +6,7 @@
     "title": "RESTFUL-API-PYTHON-MONGODB",
     "license": {
       "name": "MIT",
-      "url": "https://opensource.ort/license/MIT"
+      "url": "https://opensource.org/licenses/MIT"
     }
   },
   "schemes": [

@@ -56,35 +56,28 @@ def register():
 def login():
     username = request.args.get("username")
     password = request.args.get("password")
-    #username = request.json["username"]
-    #password = request.json["password"]
     check_user = []
     check_user = user_collection.find({"$and": [
         {"username": {"$eq": username}},
         {"password": {"$eq": password}}
     ]})
     response_2 = list(check_user)
-#    check_user = user_collection.find({'username': username, "password": password})
-    #response_2 = json_util.dumps(check_user)
     if check_user.count():
         response = jsonify(message='Login sucesss!')
         response.status_code = 200
         return response
-        #return Response(response_2, mimetype="application/json")
     else:
         return not_found()
-
-   # return Response(response, mimetype="application/json")
 
 #verify email
 @app.route('/verifyemail', methods=['GET'])
 def verifyemail():
     email = request.args.get("email")
-    check_email = user_collection.find({'email': email})
-    response = list(check_email)
-    if response.count():
+    check_email = user_collection.find_one({"email": email})
+    if check_email:
         response = jsonify(message='A verify email has been sent to your email address!')
         response.status_code = 200
+
         return response
     else:
         return not_found()
@@ -96,7 +89,6 @@ def createProduct():
     productPrice = request.json['price']
     productQuantity = request.json['quantity']
     productDescription = request.json['description']
-
     check_production_name = product.find_one({'name_product': productName})
     if not check_production_name and productPrice and productQuantity and productDescription:
         product.insert({'name_product': productName, 'price': productPrice, 'quantity': productQuantity, 'description': productDescription})
