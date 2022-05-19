@@ -4,8 +4,6 @@ from bson import json_util
 from bson.objectid import ObjectId
 from flask_swagger_ui import get_swaggerui_blueprint
 
-
-
 app = Flask(__name__)
 
 connection_string = f"mongodb://neko:123@172.16.2.97:27017"
